@@ -1,9 +1,14 @@
-import { createRouter,  createWebHistory } from "vue-router";
+import { isAuthenticated } from "@/middleware/checkAuth";
+import { createRouter, createWebHistory } from "vue-router";
 
 const routes = [
     {
+        path: "/pagenotfound",
+        component: () => ("../views/404page.vue")
+    },
+    {
         path: "/",
-        component: () => import("../views/Dashboard.vue")
+        component: () => import("../views/Dashboard.vue"),
     },
     {
         path: "/login",
@@ -13,11 +18,14 @@ const routes = [
 
 const router = createRouter({
     history: createWebHistory(),
-    routes,
+    routes
 });
 router.beforeEach((to, from, next)=>{
-    if(to.path !== '/login')next({path: '/login'})
-    else next();
+    if(!isAuthenticated() && to.path !== '/login'){
+        next('/login')
+    }else {
+        next();
+    }
 });
 
 export default router;
